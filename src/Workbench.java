@@ -102,21 +102,38 @@ public class Workbench extends JFrame {
 
     public void queryDatabase(){
         try{
-            String q = queryInput.getText();
-            if(q != ""){
+            String q = queryInput.getText().trim();
+            if (!q.isEmpty()) {
                 statement = connection.createStatement();
                 boolean res = statement.execute(q);
-                if (res){
-                    data = statement.getResultSet();
-                    while (data.next()){
 
+                if (res) {
+                    data = statement.getResultSet();
+                    ResultSetMetaData metaData = data.getMetaData();
+                    int columnCount = metaData.getColumnCount();
+
+                    StringBuilder resultBuilder = new StringBuilder();
+
+                    for (int i = 1; i <= columnCount; i++) {
+                        resultBuilder.append(metaData.getColumnName(i)).append("\t");
                     }
-                }else{
-                    resInput.setText(statement.getUpdateCount() +" Rows affected");
+                    resultBuilder.append("\n");
+
+                    while (data.next()) {
+                        for (int i = 1; i <= columnCount; i++) {
+                            resultBuilder.append(data.getString(i)).append("\t");
+                        }
+                        resultBuilder.append("\n");
+                    }
+
+                    resInput.setText(resultBuilder.toString());
+                } else {
+                    int rowsAffected = statement.getUpdateCount();
+                    resInput.setText(rowsAffected + " Rows affected");
                 }
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            resInput.setText(e.getMessage());
         }
   }
 
@@ -203,7 +220,7 @@ public class Workbench extends JFrame {
         queryButton = new JButton("Execute");
         queryButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
-
+                queryDatabase();
             }
         });
         queryButton.setPreferredSize(new Dimension(100, 30));
