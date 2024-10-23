@@ -154,8 +154,8 @@ public class Workbench extends JFrame {
         databasesLabel = new JLabel("Databases :");
 
         serverInput = new JTextField("jdbc:mysql://localhost:3306/",15);
-        usernameInput = new JTextField("amine",15);
-        passwordInput = new JTextField("AMIN@ben1234",15);
+        usernameInput = new JTextField("username",15);
+        passwordInput = new JTextField("password",15);
 
         serverButton = new JButton("Connect to serer");
         serverButton.addActionListener(new ActionListener() {
